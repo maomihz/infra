@@ -1,0 +1,23 @@
+---
+- name: Install nftables
+  apt:
+    name: nftables
+    update_cache: yes
+  notify:
+    - enable nftables
+
+# https://wiki.debian.org/nftables
+- name: Update iptables alternatives to nftables
+  alternatives:
+    name: "{{ item }}"
+    path: "/usr/sbin/{{ item }}-nft"
+  loop:
+    - iptables
+    - ip6tables
+    - arptables
+    - etables
+
+- name: Copy basic nftables configuration sample
+  copy:
+    src: nftables.conf
+    dest: /etc/nftables.sample.conf

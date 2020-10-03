@@ -1,0 +1,4 @@
+---
+new_user: cat
+timezone: America/Chicago
+enable_nftables: false

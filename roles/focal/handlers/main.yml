@@ -1,0 +1,6 @@
+---
+- name: enable nftables
+  service:
+    name: nftables.service
+    state: started
+    enabled: yes

@@ -1,0 +1,56 @@
+---
+# Nftables obvious have problems with docker
+
+# - name: Configure nftables
+#   import_tasks: nftables.yml
+#   when: ansible_distribution_version is version('20.04', '>=')
+
+- name: Install essentials
+  apt:
+    name:
+      - zsh
+      - git
+      - curl
+      - pv
+
+- name: Set Timezone
+  timezone:
+    name: '{{ timezone }}'
+
+- name: disable motd sshd
+  pamd:
+    name: sshd
+    type: session
+    control: optional
+    module_path: pam_motd.so
+    state: absent
+
+
+- name: Put a docker group
+  group:
+    name: docker
+
+- name: Create essential user
+  user:
+    name: "{{ new_user }}"
+    shell: /usr/bin/zsh
+    groups:
+      - sudo
+      - docker
+
+
+- name: Add authorized keys
+  authorized_key:
+    user: "{{ new_user }}"
+    key: "{{ item }}"
+  loop: "{{ ssh_keys }}"
+
+
+# Put stuff in sudoers
+- name: sudo require no password
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo ALL='
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
