@@ -1,0 +1,35 @@
+---
+- name: Install build essentials
+  apt:
+    name: build-essential
+    update_cache: yes
+  
+- name: Clone vlmcsd Repository
+  git:
+    repo: 'https://github.com/Wind4/vlmcsd.git'
+    dest: "{{ vlmcsd.prefix }}"
+
+- name: Build vlmcsd
+  make:
+    chdir: "{{ vlmcsd.prefix }}"
+    target: all
+
+- name: Link binaries
+  file:
+    path: "{{ vlmcsd.install }}/{{ item }}"
+    src: "{{ vlmcsd.prefix }}/bin/{{ item }}"
+    state: link
+  loop:
+    - vlmcsd
+    - vlmcs
+
+- name: Copy service file
+  template:
+    src: vlmcsd.service.j2
+    dest: /etc/systemd/system/vlmcsd.service
+  notify:
+    - Reload systemd
+    - Start vlmcsd
+
+
+
