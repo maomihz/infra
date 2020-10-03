@@ -1,0 +1,29 @@
+---
+# default file for nginx
+clone: false
+install: true
+
+# SSL configuration
+ssl_host: local
+ssl_fake: fake
+
+# Paths
+web_root: /srv
+html_root: /srv/html
+data_root: /data
+ssl_root: /ssl
+nginx_root: /etc/nginx
+
+php_version: 7.4  # 7.4 for focal
+php_root: "/etc/php/{{ php_version }}"
+php_pool_root: "{{ php_root }}/fpm/pool.d"
+fastcgi_listen: "/run/php/php{{ php_version }}-fpm-user.sock"
+
+# User
+new_user: www-data
+www_user: www-data
+www_group: www-data
+
+# Server names
+server_name: "{{ inventory_hostname }}"
+notebook_server_name: "notebook.{{ server_name }}"

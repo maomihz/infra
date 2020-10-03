@@ -1,0 +1,5 @@
+{% for item in upstreams | dict2items %}
+upstream {{ item.key }} {
+  server {{ item.value }};
+}
+{% endfor %}

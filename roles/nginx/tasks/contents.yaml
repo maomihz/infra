@@ -1,0 +1,45 @@
+---
+- name: Create Web Root
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: "{{ new_user }}"
+    group: "{{ new_user }}"
+  loop:
+    - '{{ web_root }}'
+    - '{{ html_root }}'
+
+
+- name: Copy default html files
+  copy:
+    src: "html/{{ item }}"
+    dest: '{{ html_root }}/{{ item }}'
+  loop: "{{ html_files }}"
+
+
+- name: Copy HTTP index page
+  template:
+    src: "html/{{ item }}.j2"
+    dest: '{{ html_root }}/{{ item }}'
+  loop: "{{ html_files_template }}"
+
+
+# - name: Clone Repo
+#   git:
+#     repo: '{{ item.repo }}'
+#     dest: '{{ item.dest }}'
+#     version: '{{ item.version | default("HEAD") }}'
+#   ignore_errors: yes
+#   loop:
+#     - repo: 'https://github.com/kalcaddle/KodExplorer'
+#       dest: '{{ html_root }}/exp'
+#     - repo: 'https://github.com/ronggang/transmission-web-control'
+#       dest: '{{ web_root }}/web-control'
+#     - repo: 'https://github.com/Novik/ruTorrent.git'
+#       dest: '{{ html_root }}/rt'
+#     - repo: 'https://github.com/wordpress/wordpress'
+#       dest: '{{ html_root }}/wp'
+#       version: 5.2.1
+#   when: clone
+#   become: yes
+#   become_user: "{{ new_user }}"

@@ -1,0 +1,46 @@
+---
+# vars file for nginx
+redirect_code: 301  # Choose 301 or 302
+
+upstreams:
+  transmission: 127.0.0.1:9091
+  jupyter:      127.0.0.1:8888
+  zeronet:      127.0.0.1:43110
+
+sites_available:
+  - default-http
+  - default-https
+  - default-notebook
+  - default-server
+
+sites_enabled:
+  - default-http
+  - default-https
+  - default-notebook
+  - default-server
+
+sites_disabled:
+  - default
+
+nginx_configs:
+  - 'conf.d/security.conf'
+  - 'snippets/ssl.conf'
+  - 'snippets/auth.conf'
+  - 'snippets/fancyindex.conf'
+  - 'snippets/try-files-wp.conf'
+  - 'snippets/websocket.conf'
+  - 'snippets/proxy.conf'
+  - 'snippets/proxy-local.conf'
+  - 'snippets/fastcgi-php.conf'
+  - 'fastcgi.conf'
+  - '.htpasswd'
+
+nginx_configs_template:
+  - 'conf.d/upstreams.conf'
+  - 'snippets/php-fpm.conf'
+
+html_files:
+  - 'github-markdown.css'
+
+html_files_template:
+  - 'index.html'

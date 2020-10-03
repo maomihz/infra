@@ -1,0 +1,10 @@
+---
+- name: Install Packages
+  import_tasks: installation.yaml
+  when: install
+
+- name: Create configurations
+  import_tasks: configuration.yaml
+
+- name: Create initial contents
+  import_tasks: contents.yaml

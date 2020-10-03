@@ -1,0 +1,47 @@
+---
+- name: Copy Nginx Configuration
+  copy:
+    src: "nginx/{{ item }}"
+    dest: "{{ nginx_root }}/{{ item }}"
+  loop: "{{ nginx_configs }}"
+  notify: reload nginx
+
+
+- name: Copy Nginx Configuration template
+  template:
+    src: "nginx/{{ item }}.j2"
+    dest: "{{ nginx_root }}/{{ item }}"
+  loop: "{{ nginx_configs_template }}"
+  notify: reload nginx
+
+
+- name: Copy PHP configuration template
+  template:
+    src: 'php/www-user.conf.j2'
+    dest: '{{ php_pool_root }}/www-user.conf'
+  notify: restart php-fpm
+
+
+- name: Copy Nginx sites available files template
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ nginx_root }}/sites-available/{{ item }}"
+  loop: "{{ sites_available }}"
+  notify: reload nginx
+
+
+- name: Enable Nginx sites
+  file:
+    src: "{{ nginx_root }}/sites-available/{{ item }}"
+    dest: "{{ nginx_root }}/sites-enabled/{{ item }}"
+    state: link
+  loop: "{{ sites_enabled }}"
+  notify: reload nginx
+
+
+- name: Disable Nginx sites
+  file:
+    path: "{{ nginx_root }}/sites-enabled/{{ item }}"
+    state: absent
+  loop: "{{ sites_disabled }}"
+  notify: reload nginx

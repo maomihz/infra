@@ -1,0 +1,12 @@
+# Deny all unnamed SSL requests
+server {
+  listen 443 ssl default_server;
+  listen [::]:443 ssl default_server;
+
+  include snippets/ssl/fake.conf;
+
+  # ssl_ciphers !ALL:aNULL;
+
+  server_name _;
+  return 444;
+}

@@ -1,0 +1,16 @@
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+
+  include snippets/ssl/{{ ssl_host }}.conf;
+  include snippets/ssl.conf;
+
+  server_name {{ notebook_server_name }};
+
+  location / {
+    include snippets/websocket.conf;
+    include snippets/proxy-local.conf;
+
+    proxy_pass http://jupyter;
+  }
+}

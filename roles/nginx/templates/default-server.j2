@@ -1,0 +1,53 @@
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+
+  include snippets/ssl/{{ ssl_host }}.conf;
+  include snippets/ssl.conf;
+
+  server_name {{ server_name }};
+
+  root {{ html_root }};
+  index index.php index.html index.htm;
+  location / {
+    try_files $uri $uri/ =404;
+  }
+
+  auth_basic "Authorize Yourself";
+  auth_basic_user_file /etc/nginx/.htpasswd;
+
+
+  # Transmission Proxy
+  location /tr {
+      return 301 https://$server_name/transmission/web;
+  }
+
+  location /transmission {
+    include snippets/proxy-local.conf;
+
+    proxy_set_header Connection "";
+    proxy_pass_header X-Transmission-Session-Id;
+    add_header   Front-End-Https   on;
+
+    proxy_pass http://transmission;
+
+    location /transmission/web {
+      alias {{ web_root }}/web-control/src;
+    }
+  }
+
+  location ~ \.php$ {
+    include snippets/php-fpm.conf;
+  }
+
+  location ~ /\.ht {
+    deny all;
+  }
+
+  location /data {
+    alias {{ data_root }};
+    include snippets/fancyindex.conf;
+    auth_basic off;
+  }
+
+}

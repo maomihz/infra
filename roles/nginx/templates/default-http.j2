@@ -1,0 +1,13 @@
+# Redirect all 80 requests
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  # Allow ACME to use HTTP
+  location /.well-known/acme-challenge {
+    alias {{ html_root }}/.well-known/acme-challenge;
+  }
+
+  # {{ redirect_code }} redirect
+  return {{ redirect_code }} https://$host$request_uri;
+}
