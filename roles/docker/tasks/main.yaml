@@ -1,0 +1,21 @@
+---
+# Docker
+# - name: Add Docker Apt Key
+#   apt_key:
+#     id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88 # https://download.docker.com/linux/ubuntu/gpg
+#     keyserver: "{{ apt_keyserver }}"
+#     state: present
+
+# - name: Add Additional Repo
+#   apt_repository:
+#     repo: 'deb [arch={{ repo_arch }}] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} {{ docker_release_channel }}'
+#     state: present
+#     update_cache: true
+
+- name: Install Docker
+  apt:
+    name:
+      - docker.io
+      - docker-compose
+    state: present
+  notify: start docker
