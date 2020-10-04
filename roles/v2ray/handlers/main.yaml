@@ -1,0 +1,11 @@
+---
+# handlers file for basic
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start v2ray
+  service:
+    name: v2ray
+    state: started
+    enabled: yes

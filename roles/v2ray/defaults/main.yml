@@ -1,0 +1,19 @@
+---
+v2ray_arch:
+  x86_64: linux-64
+v2ray:
+  version: v4.30.0
+  prefix: /opt/v2ray
+  install: /usr/local
+
+vmess_port: 24363
+vmess_id: fee187df-9eaa-4a5b-99b1-544990fd9840
+vmess_tls: false
+
+ss_port: 9508
+ss_method: aes-128-cfb
+ss_password: password
+
+tg_port: 16960
+tg_user: user
+tg_password: password
