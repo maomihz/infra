@@ -1,0 +1,6 @@
+---
+- hosts: pi
+  become: yes
+  become_user: root
+  roles:
+    - role: nginx
