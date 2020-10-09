@@ -5,7 +5,6 @@
   },
 
   "inbounds": [
-
     // VMess
     {
       "port": {{ vmess_port }},
@@ -13,35 +12,16 @@
       "protocol": "vmess",
 
       "settings": {
-        "clients": [
-          {
-            "id": "{{ vmess_id }}",
-            "alterId": 64
-          }
-        ]
+        "clients": {{ vmess_id | to_json }}
       },
       "tag": "inbound-v2",
-      {% if vmess_tls %}
-      "streamSettings": { // Enable TLS
-        "network": "tcp",
-        "security": "tls",
+      "streamSettings": { // Enable TLS?
+        "network": "{{ vmess_network }}",
+        "security": "{{ vmess_security }}",
         "tlsSettings": {
-          "certificates": [
-            {
-              "certificateFile": "{{ vmess_tls.cert }}",
-              "keyFile": "{{ vmess_tls.key }}"
-            }
-          ]
+          "certificates": {{ vmess_certificates | to_json }}
         }
       }
-
-      {% else %}
-      "streamSettings": {
-        "network": "tcp"
-      }
-      {% endif %}
-
-
     },
 
     // Shadowsocks
@@ -64,13 +44,12 @@
       "protocol": "socks",
 
       "settings": {
+        {%- if tg_accounts %}
         "auth": "password",
-        "accounts": [
-          {
-            "user": "{{ tg_user }}",
-            "pass": "{{ tg_password }}"
-          }
-        ]
+        "accounts": {{tg_accounts | to_json}}
+        {%- else %}
+        "auth": "noauth"
+        {%- endif %}
       },
       "tag": "inbound-tg"
     }
@@ -89,6 +68,20 @@
       "tag": "blocked"
     }
   ],
+
+  "transport": {
+    "tcpSettings": {
+      "header": {
+        "type": "none"
+      }
+    },
+    "wsSettings": {
+      "path": "/",
+      "headers": {
+        "Host": ""
+      }
+    }
+  },
 
 
   "routing": {

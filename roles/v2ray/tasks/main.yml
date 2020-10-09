@@ -3,46 +3,47 @@
   apt:
     name: unzip
 
-- name: Create directory
+- name: Create directories
   file:
-    path: "{{ v2ray.prefix }}"
+    path: "{{ item }}"
     state: directory
+  loop:
+    - "{{ v2ray_prefix }}"
+    - "{{ v2ray_install }}"
+    - "{{ v2ray_install }}/bin"
+    - "{{ v2ray_install }}/etc/v2ray"
 
 - name: Download archive
   get_url:
     url: "{{ v2ray_url }}"
-    dest: "{{ v2ray.prefix }}/{{ v2ray_file }}"
+    dest: "{{ v2ray_archive }}"
 
 - name: Extract contents
   unarchive:
     remote_src: yes
-    src: "{{ v2ray.prefix }}/{{ v2ray_file }}"
-    dest: "{{ v2ray.prefix }}"
+    src: "{{ v2ray_archive }}"
+    dest: "{{ v2ray_prefix }}"
 
 - name: Link binaries
   file:
-    path: "{{ v2ray.install }}/bin/{{ item }}"
-    src: "{{ v2ray.prefix }}/{{ item }}"
+    path: "{{ v2ray_install }}/bin/{{ item }}"
+    src: "{{ v2ray_prefix }}/{{ item }}"
     state: link
   loop:
     - v2ray
     - v2ctl
 
-
-- name: Create config directory
-  file:
-    path: "{{ v2ray.install }}/etc/v2ray"
-    state: directory
-
 - name: Copy config file
   template:
     src: config.json.j2
-    dest: "{{ v2ray.install }}/etc/v2ray/config.json"
+    dest: "{{ v2ray_install }}/etc/v2ray/config.json"
+  notify:
+    - restart v2ray
 
 - name: Copy service file
   copy:
     remote_src: yes
-    src: "{{ v2ray.prefix }}/systemd/system/"
+    src: "{{ v2ray_prefix }}/systemd/system/"
     dest: /etc/systemd/system/
   notify:
     - Reload systemd

@@ -9,3 +9,8 @@
     name: v2ray
     state: started
     enabled: yes
+
+- name: restart v2ray
+  service:
+    name: v2ray
+    state: restarted
